@@ -95,6 +95,7 @@ function save_image($image, $filename){
 
 function delete_image($filename){
   if(file_exists(IMAGE_DIR . $filename) === true){
+    //un_linkはファイルを削除する関数
     unlink(IMAGE_DIR . $filename);
     return true;
   }

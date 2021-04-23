@@ -114,7 +114,7 @@ function purchase_carts($db, $carts){
       set_error($cart['name'] . 'の購入に失敗しました。');
     }
   }
-  
+
   delete_user_carts($db, $carts[0]['user_id']);
 }
 

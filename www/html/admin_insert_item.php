@@ -23,8 +23,10 @@ $price = get_post('price');
 $status = get_post('status');
 $stock = get_post('stock');
 
+//POSTされたimageを取得
 $image = get_file('image');
 
+//最終的に商品をDBにインサート
 if(regist_item($db, $name, $price, $stock, $status, $image)){
   set_message('商品を登録しました。');
 }else {
