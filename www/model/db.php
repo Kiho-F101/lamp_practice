@@ -38,6 +38,7 @@ function fetch_all_query($db, $sql, $params = array()){
   return false;
 }
 
+//$params=array()というのはオプション引数。一応書いてあるけど、なくてもいいよという引数。この場合、あるなら配列の形で引き受ける。
 function execute_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
