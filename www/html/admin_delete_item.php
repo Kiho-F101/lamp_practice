@@ -12,6 +12,11 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+//トークンをチェック
+if(is_valid_csrf_token($tokem)===FALSE){
+  set_error('不正なアクセスです');
+  redirect_to(ADMIN_URL);
+}
 //DB接続
 $db = get_db_connect();
 //ログインしているユーザ情報を取得
