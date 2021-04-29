@@ -86,6 +86,10 @@ function get_upload_filename($file){
 }
 
 function get_random_string($length = 20){
+  //substr関数・・・文字列を切り出す関数。substr(対象文字列,開始位置,文字数);
+  //base_convert関数・・・数値の基数を任意に変換する。base_convert(変換する数値,返還前の数値の基数,返還後の数値の基数);
+  //hash関数・・・ハッシュとは、ランダムな何かを入れて戻り値にランダムな何かが帰ってくること？？
+  //uniqid関数・・・唯一の値（ユニークID）を生成する関数
   return substr(base_convert(hash('sha256', uniqid()), 16, 36), 0, $length);
 }
 
@@ -140,3 +144,20 @@ function h($str){
   return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
+// トークンの生成
+function get_csrf_token(){
+  // get_random_string()はユーザー定義関数。
+  $token = get_random_string(30);
+  // set_session()はユーザー定義関数。
+  set_session('csrf_token', $token);
+  return $token;
+}
+
+// トークンのチェック
+function is_valid_csrf_token($token){
+  if($token === '') {
+    return false;
+  }
+  // get_session()はユーザー定義関数
+  return $token === get_session('csrf_token');
+}
