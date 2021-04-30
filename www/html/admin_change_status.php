@@ -16,6 +16,16 @@ session_start();
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
+
+//トークンを取得
+$token = get_post('token');
+
+//トークンをチェック
+if(is_valid_csrf_token($token)===FALSE){
+  set_error('不正なアクセスです');
+  redirect_to(ADMIN_URL);
+}
+
 //get_db_connect関数はitem.phpとuser.phpの上でrequire_onceされているdb.phpのなかに定義されてる
 //データベースに接続する関数
 $db = get_db_connect();

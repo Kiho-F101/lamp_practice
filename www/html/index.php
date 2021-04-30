@@ -10,6 +10,9 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+//トークンを作成
+$token = get_csrf_token();
+
 $db = get_db_connect();
 $user = get_login_user($db);
 
