@@ -101,20 +101,49 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql, array($cart_id));
 }
 
+//課題激むずポイント
 function purchase_carts($db, $carts){
+  //購入できるかどうかの確認をしてる（在庫とか）
   if(validate_cart_purchase($carts) === false){
     return false;
   }
-  foreach($carts as $cart){
-    if(update_item_stock(
+  //購入できそうならトランザクション開始
+  $db->beginTransaction();
+
+  //購入日時のための変数を定義
+  $datetime = date('Y-m-d H:i:s');
+  //$cart[0]['user_id']について。[0]というのは、その人のカートの中の最初の商品のこと。たとえ１つしか商品を買ってなくても、user_idは同じなので、このように描くのが良い。
+  if(regist_purchase_histories($db, $carts[0]['user_id'], $datetime)===false){
+    set_error('エラーです。');
+  }else{
+    //履歴に登録するのに支障なければ
+    $order_number = $db->lastInsertId();
+    //ここの$cartsはコントローラーで定義されてる
+    foreach($carts as $cart){
+      //在庫数を購入数分減らす(FALSEの場合)
+      if(update_item_stock(
         $db, 
         $cart['item_id'], 
         $cart['stock'] - $cart['amount']
-      ) === false){
-      set_error($cart['name'] . 'の購入に失敗しました。');
+        ) === false){
+          
+          set_error($cart['name'] . 'の購入に失敗しました。');
+      }else{
+        //TRUEなら購入明細画面に追加（FALSEの場合）
+        if(regist_purchase_details($db, $order_number, $cart['item_id'], $cart['amount'], $cart['price'])===false){
+          set_error('エラーです。');
+        }
+      }
     }
   }
-
+  if(count($_SESSION['__errors']===0){
+    //コミット
+    $db->commit();
+  }else{
+    //ロールバック
+    $db->rollBack();
+    return false;
+  }
   delete_user_carts($db, $carts[0]['user_id']);
 }
 
@@ -157,3 +186,32 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+//購入履歴
+Function regist_purchase_histories($db, $user_id, $datetime){
+  $sql = "
+  INSERT INTO
+  purchase_histories(
+  user_id,
+  purchase_datetime
+  )
+  VALUES(?, ?);
+  ";
+  
+  return execute_query($db, $sql, array($user_id, $datetime));
+  }
+
+  //購入明細
+  Function regist_purchase_details($db, $order_number, $item_id, $amount, $price){
+    $sql = "
+    INSERT INTO
+    purchase_details(
+    order_number,
+    item_id,
+    Amount,
+    Price
+    )
+    VALUES(?, ?, ?, ?);
+    ";
+    
+    return execute_query($db, $sql, array($order_number, $item_id, $amount, $price));
+    }
