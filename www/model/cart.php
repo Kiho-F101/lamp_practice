@@ -136,7 +136,7 @@ function purchase_carts($db, $carts){
       }
     }
   }
-  if(count($_SESSION['__errors']===0){
+  if(count($_SESSION['__errors'])===0){
     //コミット
     $db->commit();
   }else{
@@ -187,7 +187,7 @@ function validate_cart_purchase($carts){
 }
 
 //購入履歴
-Function regist_purchase_histories($db, $user_id, $datetime){
+function regist_purchase_histories($db, $user_id, $datetime){
   $sql = "
   INSERT INTO
   purchase_histories(
@@ -201,14 +201,14 @@ Function regist_purchase_histories($db, $user_id, $datetime){
   }
 
   //購入明細
-  Function regist_purchase_details($db, $order_number, $item_id, $amount, $price){
+  function regist_purchase_details($db, $order_number, $item_id, $amount, $price){
     $sql = "
     INSERT INTO
     purchase_details(
     order_number,
     item_id,
-    Amount,
-    Price
+    amount,
+    price
     )
     VALUES(?, ?, ?, ?);
     ";
