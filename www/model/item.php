@@ -215,21 +215,19 @@ function get_all_items_by_popularity($db){
       items.price,
       items.image,
       items.stock,
-      purchase_details.amount
-    SUM 
-      purchase_details.amount AS popularity
+      SUM(purchase_details.amount) AS popularity
     FROM
       items
     JOIN
       purchase_details
     ON
-      items.item_id = purchase_details.item_id
+      items.item_id=purchase_details.item_id
     WHERE
-      items.status = 1
+      items.status=1
     GROUP BY
       purchase_details.item_id
     ORDER BY
-      purchase_details.amount DESC
+      popularity DESC
     LIMIT
       3
   ";
