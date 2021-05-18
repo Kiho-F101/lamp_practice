@@ -136,7 +136,7 @@ function purchase_carts($db, $carts){
       }
     }
   }
-  if(count($_SESSION['__errors'])===0){
+  if(has_error()===FALSE){
     //コミット
     $db->commit();
   }else{
@@ -186,7 +186,7 @@ function validate_cart_purchase($carts){
   return true;
 }
 
-//購入履歴
+//購入履歴（インサート）
 function regist_purchase_histories($db, $user_id, $datetime){
   $sql = "
   INSERT INTO
@@ -200,7 +200,7 @@ function regist_purchase_histories($db, $user_id, $datetime){
   return execute_query($db, $sql, array($user_id, $datetime));
   }
 
-  //購入明細
+  //購入明細（インサート）
   function regist_purchase_details($db, $order_number, $item_id, $amount, $price){
     $sql = "
     INSERT INTO
@@ -214,4 +214,119 @@ function regist_purchase_histories($db, $user_id, $datetime){
     ";
     
     return execute_query($db, $sql, array($order_number, $item_id, $amount, $price));
+    }
+
+    //購入履歴（セレクト）（一般ユーザ用）
+    function get_purchase_histories($db, $user_id){
+      $sql = "
+      SELECT
+      purchase_histories.order_number, 
+      purchase_histories.purchase_datetime,
+      SUM(purchase_details.price*purchase_details.amount) AS total
+      FROM
+      purchase_histories
+      JOIN
+      purchase_details
+      ON
+      purchase_histories.order_number=purchase_details.order_number
+      WHERE
+      purchase_histories.user_id = ?
+      GROUP BY
+      purchase_histories.order_number
+      
+      ";
+
+      return fetch_all_query($db, $sql, array($user_id));
+    }
+
+    //購入履歴（セレクト）（管理者用）
+    function get_purchase_all_histories($db){
+      $sql = "
+      SELECT
+      purchase_histories.order_number, 
+      purchase_histories.purchase_datetime,
+      SUM(purchase_details.price*purchase_details.amount) AS total
+      FROM
+      purchase_histories
+      JOIN
+      purchase_details
+      ON
+      purchase_histories.order_number=purchase_details.order_number
+      GROUP BY
+      purchase_histories.order_number
+      ";
+
+      return fetch_all_query($db, $sql);
+    }
+
+    //購入明細（セレクト）（一般ユーザ）
+    function get_purchase_details($db, $order_number){
+      $sql = "
+      SELECT
+      items.name,
+      purchase_details.price,
+      purchase_details.amount
+      FROM
+      purchase_details
+      JOIN
+      items
+      ON
+      purchase_details.item_id=items.item_id
+      WHERE
+      order_number = ?
+
+      ";
+
+      return fetch_all_query($db, $sql, array($order_number));
+    }
+
+    //購入明細（セレクト）（管理者）
+    function get_purchase_all_details($db){
+      $sql = "
+      SELECT
+      items.name,
+      purchase_details.price,
+      purchase_details.amount
+      FROM
+      purchase_details
+      JOIN
+      items
+      ON
+      purchase_details.item_id=items.item_id
+      ";
+
+      return fetch_all_query($db, $sql);
+    }
+
+    //購入履歴で使う合計金額???
+    function sum_history($histories){
+      $total_price = 0;
+      foreach($histories as $history){
+        $total_price += $history['price'] * $history['amount'];
+      }
+      return $total_price;
+    }
+    
+    //明細画面上部の注文番号、注文日時、合計金額を表示する
+    function get_purchase_history($db, $order_number){
+      $sql = "
+      SELECT
+      purchase_histories.user_id,
+      purchase_histories.order_number, 
+      purchase_histories.purchase_datetime,
+      SUM(purchase_details.price*purchase_details.amount) AS total
+      FROM
+      purchase_histories
+      JOIN
+      purchase_details
+      ON
+      purchase_histories.order_number=purchase_details.order_number
+      WHERE
+      purchase_histories.order_number = ?
+      GROUP BY
+      purchase_histories.order_number
+      
+      ";
+
+      return fetch_query($db, $sql, array($order_number));
     }
