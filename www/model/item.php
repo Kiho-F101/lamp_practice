@@ -206,3 +206,33 @@ function is_valid_item_status($status){
   }
   return $is_valid;
 }
+
+//商品の人気順に１〜３位までを表示させる
+function get_all_items_by_popularity($db){
+  $sql = "
+    SELECT
+      items.name,
+      items.price,
+      items.image,
+      items.stock,
+      purchase_details.amount
+    SUM 
+      purchase_details.amount AS popularity
+    FROM
+      items
+    JOIN
+      purchase_details
+    ON
+      items.item_id = purchase_details.item_id
+    WHERE
+      items.status = 1
+    GROUP BY
+      purchase_details.item_id
+    ORDER BY
+      purchase_details.amount DESC
+    LIMIT
+      3
+  ";
+
+  return fetch_all_query($db, $sql);
+}

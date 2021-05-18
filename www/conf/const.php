@@ -21,6 +21,8 @@ define('HOME_URL', '/index.php');
 define('CART_URL', '/cart.php');
 define('FINISH_URL', '/finish.php');
 define('ADMIN_URL', '/admin.php');
+//購入履歴
+define('HISTORY_URL', '/history.php');
 
 define('REGEXP_ALPHANUMERIC', '/\A[0-9a-zA-Z]+\z/');
 define('REGEXP_POSITIVE_INTEGER', '/\A([1-9][0-9]*|0)\z/');
@@ -31,6 +33,7 @@ define('USER_NAME_LENGTH_MAX', 100);
 define('USER_PASSWORD_LENGTH_MIN', 6);
 define('USER_PASSWORD_LENGTH_MAX', 100);
 
+//1が管理者、２が一般ユーザ
 define('USER_TYPE_ADMIN', 1);
 define('USER_TYPE_NORMAL', 2);
 

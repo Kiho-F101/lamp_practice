@@ -25,7 +25,7 @@ $db = get_db_connect();
 //ログインしているユーザ情報を取得
 $user = get_login_user($db);
 
-//userのタイプが１出なければリダイレクト
+//userのタイプが１でなければ（＝一般ユーザ）リダイレクト
 if(is_admin($user) === false){
   redirect_to(LOGIN_URL);
 }
