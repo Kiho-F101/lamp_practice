@@ -32,8 +32,6 @@ $user = get_login_user($db);
 //一般ユーザだったら
 if($user['type']===USER_TYPE_NORMAL){
     $histories = get_purchase_histories($db, $user['user_id']);
-    //新着順にする
-    $histories = array_reverse($histories);
 }else if($user['type']===USER_TYPE_ADMIN){
     //管理者ユーザだったら
     $histories = get_purchase_all_histories($db);

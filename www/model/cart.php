@@ -233,6 +233,8 @@ function regist_purchase_histories($db, $user_id, $datetime){
       purchase_histories.user_id = ?
       GROUP BY
       purchase_histories.order_number
+      ORDER BY
+      purchase_histories.purchase_datetime DESC
       
       ";
 
@@ -254,6 +256,8 @@ function regist_purchase_histories($db, $user_id, $datetime){
       purchase_histories.order_number=purchase_details.order_number
       GROUP BY
       purchase_histories.order_number
+      ORDER BY
+      purchase_histories.purchase_datetime DESC
       ";
 
       return fetch_all_query($db, $sql);
