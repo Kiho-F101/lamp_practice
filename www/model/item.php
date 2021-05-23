@@ -234,3 +234,61 @@ function get_all_items_by_popularity($db){
 
   return fetch_all_query($db, $sql);
 }
+
+//商品を新着順で表示する
+function get_all_items_by_newest($db){
+  $sql = "
+    SELECT
+      name,
+      price,
+      image,
+      stock,
+      created
+    FROM
+      items
+    WHERE
+      status=1
+    ORDER BY
+      created DESC
+  ";
+
+  return fetch_all_query($db, $sql);
+}
+
+//商品を価格の安い順に表示する
+function get_all_items_by_ascending_order($db){
+  $sql = "
+    SELECT
+      name,
+      price,
+      image,
+      stock
+    FROM
+      items
+    WHERE
+      status=1
+    ORDER BY
+      price
+  ";
+
+  return fetch_all_query($db, $sql);
+}
+
+//商品を価格の高い順で表示する
+function get_all_items_by_descending_order($db){
+  $sql = "
+    SELECT
+      name,
+      price,
+      image,
+      stock
+    FROM
+      items
+    WHERE
+      status=1
+    ORDER BY
+      price DESC
+  ";
+
+  return fetch_all_query($db, $sql);
+}
